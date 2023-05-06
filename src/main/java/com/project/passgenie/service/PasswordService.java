@@ -35,7 +35,7 @@ public class PasswordService {
 
     public List<Password> getAllPasswordsByUserId(Long userId) {
         try {
-            return passwordRepository.findAllByUserId(userId);
+            return passwordRepository.findAllByUserIdAndIsActiveTrue(userId);
         } catch (Exception e) {
             throw new RuntimeException("Failed to retrieve passwords for user with id " + userId, e);
         }
@@ -44,7 +44,7 @@ public class PasswordService {
     public Password getPasswordById(Long passwordId) {
         Optional<Password> optionalPassword;
         try {
-            optionalPassword = passwordRepository.findById(passwordId);
+            optionalPassword = passwordRepository.findByIdAndIsActiveTrue(passwordId);
         } catch (Exception e) {
             throw new RuntimeException("Failed to retrieve password with id " + passwordId, e);
         }
@@ -73,8 +73,9 @@ public class PasswordService {
     public void deletePassword(Long passwordId, Long userId) {
         Password existingPassword = getPasswordById(passwordId);
         if (existingPassword.getUserId().equals(userId)) {
+            existingPassword.setIsActive(false);
             try {
-                passwordRepository.deleteById(passwordId);
+                passwordRepository.save(existingPassword);
             } catch (Exception e) {
                 throw new RuntimeException("Failed to delete password with id " + passwordId, e);
             }

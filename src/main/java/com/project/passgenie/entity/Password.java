@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 import java.sql.Date;
 
 @Entity
-@Table(name = "Password")
+@Table(name = "Passwords")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

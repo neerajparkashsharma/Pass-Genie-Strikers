@@ -18,20 +18,14 @@ import java.util.Collections;
 public class UserService implements UserDetailsService {
 
 
-
-    private final UserRepository userRepository;
-
     @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+
+    private  UserRepository userRepository;
+
 
     @Autowired
     private PasswordEncoder bcryptEncoder;
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+
 
     public boolean findByEmail(String email) {
         try {
@@ -118,8 +112,6 @@ public class UserService implements UserDetailsService {
     }
     private SimpleGrantedAuthority getAuthority(User user) {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + "USER");
-
-
         return authority;
     }
 }

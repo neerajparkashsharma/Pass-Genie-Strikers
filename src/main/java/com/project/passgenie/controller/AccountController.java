@@ -6,6 +6,7 @@ import com.project.passgenie.entity.User;
 import com.project.passgenie.security.JwtUtil;
 import com.project.passgenie.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,11 +25,12 @@ import org.springframework.web.bind.annotation.*;
 public class AccountController {
 
     @Autowired
-    private final UserService userService;
+    private  UserService userService;
     @Autowired
-    private final PasswordEncoder passwordEncoder;
+    private  PasswordEncoder passwordEncoder;
     @Autowired
-    private final AuthenticationManager authenticationManager;
+    private AuthenticationManager authenticationManager;
+
     @Autowired
     private final JwtUtil jwtUtil;
 
@@ -51,7 +53,7 @@ public class AccountController {
 
         User user = new User();
         user.setUserName(registerRequest.getUsername());
-        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        user.setPassword((registerRequest.getPassword()));
         userService.createUser(user);
         return ResponseEntity.ok().build();
     }

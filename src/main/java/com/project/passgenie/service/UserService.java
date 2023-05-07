@@ -3,10 +3,20 @@ package com.project.passgenie.service;
 import com.project.passgenie.entity.User;
 import com.project.passgenie.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
+
 
 
     private final UserRepository userRepository;
@@ -16,6 +26,12 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    @Autowired
+    private PasswordEncoder bcryptEncoder;
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     public boolean findByEmail(String email) {
         try {
@@ -62,7 +78,7 @@ public class UserService {
             user.setIsActive(true);
             user.setCreatedOn(new java.sql.Date(System.currentTimeMillis()));
             user.setUpdatedOn(new java.sql.Date(System.currentTimeMillis()));
-
+            user.setPassword(bcryptEncoder.encode(user.getPassword()));
             //check for email existence
             if (findByEmail(user.getEmailAddress())) {
                 throw new RuntimeException("Email already exists");
@@ -92,5 +108,18 @@ public class UserService {
     }
 
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUserName(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found with username: " + username);
+        }
+        return new org.springframework.security.core.userdetails.User(user.getUserName(), user.getPassword(),true,true,true,true, Collections.singleton(getAuthority(user)));
+    }
+    private SimpleGrantedAuthority getAuthority(User user) {
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + "USER");
 
+
+        return authority;
+    }
 }

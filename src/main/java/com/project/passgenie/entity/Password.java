@@ -53,13 +53,13 @@ public class Password {
     @NotNull("Created by must not be null")
     private Long createdBy;
 
-    @Column(name = "created_on")
+    @Column(name = "created_date")
     private Date createdOn;
 
     @Column(name = "updated_by")
     @NotNull("Updated by must not be null")
     private Long updatedBy;
 
-    @Column(name = "updated_on")
+    @Column(name = "updated_date")
     private Date updatedOn;
 }

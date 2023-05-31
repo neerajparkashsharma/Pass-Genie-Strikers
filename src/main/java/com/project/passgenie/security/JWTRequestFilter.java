@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.project.passgenie.service.UserDetailsImpl;
 import com.project.passgenie.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ public class JWTRequestFilter extends OncePerRequestFilter {
 
     @Autowired
     private UserService jwtUserDetailsService;
+
+    @Autowired
+    private UserDetailsImpl userDetailsImpl;
 
     @Autowired
     private JwtUtil jwtTokenUtil;
@@ -50,7 +54,7 @@ public class JWTRequestFilter extends OncePerRequestFilter {
         //Once we get the token validate it.
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(username);
+            UserDetails userDetails = this.userDetailsImpl.loadUserByUsername(username);
 
             // if token is valid configure Spring Security to manually set authentication
             if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {

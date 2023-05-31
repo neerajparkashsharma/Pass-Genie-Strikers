@@ -19,13 +19,9 @@ public class PasswordService {
         this.passwordRepository = passwordRepository;
     }
 
-    public Password createPassword(Password password, Long userId, Long createdBy) {
-        password.setUserId(userId);
-        password.setCreatedBy(createdBy);
-        password.setCreatedOn(new Date(System.currentTimeMillis()));
-        password.setUpdatedBy(createdBy);
-        password.setUpdatedOn(new Date(System.currentTimeMillis()));
-        password.setIsActive(true);
+    public Password createPassword(Password password) {
+         password.setCreatedOn(new Date(System.currentTimeMillis()));
+         password.setIsActive(true);
         try {
             return passwordRepository.save(password);
         } catch (Exception e) {
@@ -55,13 +51,12 @@ public class PasswordService {
         return optionalPassword.get();
     }
 
-    public Password updatePassword(Long passwordId, Password password, Long updatedBy) {
+    public Password updatePassword(Long passwordId, Password password) {
         Password existingPassword = getPasswordById(passwordId);
         existingPassword.setWebsite(password.getWebsite());
         existingPassword.setUserName(password.getUserName());
         existingPassword.setPassword(password.getPassword());
         existingPassword.setNotes(password.getNotes());
-        existingPassword.setUpdatedBy(updatedBy);
         existingPassword.setUpdatedOn(new Date(System.currentTimeMillis()));
         try {
             return passwordRepository.save(existingPassword);

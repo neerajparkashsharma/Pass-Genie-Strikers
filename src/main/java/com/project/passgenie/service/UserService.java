@@ -3,15 +3,11 @@ package com.project.passgenie.service;
 import com.project.passgenie.entity.User;
 import com.project.passgenie.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
 import java.util.Collections;
 
 @Service
@@ -21,6 +17,7 @@ public class UserService {
     @Autowired
     private  UserRepository userRepository;
 
+    @Qualifier("bCryptPasswordEncoder")
     @Autowired
     private PasswordEncoder bcryptEncoder;
 
@@ -68,8 +65,8 @@ public class UserService {
         try {
 
             user.setIsActive(true);
-            user.setCreatedOn(new java.sql.Date(System.currentTimeMillis()));
-            user.setUpdatedOn(new java.sql.Date(System.currentTimeMillis()));
+            user.setCreatedOn(new Date(System.currentTimeMillis()));
+            user.setUpdatedOn(new Date(System.currentTimeMillis()));
             user.setPassword(bcryptEncoder.encode(user.getPassword()));
             //check for email existence
             if (findByEmail(user.getEmailAddress())) {

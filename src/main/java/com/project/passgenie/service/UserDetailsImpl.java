@@ -3,6 +3,7 @@ package com.project.passgenie.service;
 import com.project.passgenie.entity.User;
 import com.project.passgenie.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,12 +15,13 @@ import java.sql.Date;
 import java.util.Collections;
 
 @Service
-public class UserDetailsImpl implements UserDetailsService{
+public class UserDetailsImpl implements UserDetailsService {
 
 
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
     private BCryptPasswordEncoder bcryptEncoder;
 
     @Override
@@ -55,42 +57,5 @@ public class UserDetailsImpl implements UserDetailsService{
             throw new RuntimeException("Failed to retrieve user with email " + email, e);
         }
     }
-
-    public User createUser(User user) {
-        try {
-
-            user.setIsActive(true);
-            user.setCreatedOn(new java.sql.Date(System.currentTimeMillis()));
-            user.setUpdatedOn(new java.sql.Date(System.currentTimeMillis()));
-            user.setActivationDate( new Date(System.currentTimeMillis()));
-            user.setPassword(bcryptEncoder.encode(user.getPassword()));
-            //check for email existence
-            if (findByEmail(user.getEmailAddress())) {
-                throw new RuntimeException("Email already exists");
-            }
-
-            //check for username existence
-            if (findByUsername(user.getUserName())) {
-                throw new RuntimeException("Username already exists");
-            }
-
-            //any other validations
-            if (user.getUserName().length() < 5) {
-                throw new RuntimeException("Username must be at least 5 characters long");
-            }
-
-            if (user.getPassword().length() < 8) {
-                throw new RuntimeException("Password must be at least 8 characters long");
-            }
-
-
-
-            return userRepository.save(user);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to create user", e);
-        }
-
-    }
-
 
 }

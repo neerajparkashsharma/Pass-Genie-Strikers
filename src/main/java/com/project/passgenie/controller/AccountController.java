@@ -9,8 +9,11 @@ import com.project.passgenie.service.UserService;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.SwaggerDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Description;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,13 +30,13 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.crypto.SecretKey;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import java.sql.Date;
-
-//import javax.validation.Valid;
 
 @RestController
 @RequestMapping("${api.base.url}/accounts")
 @Api(tags = "Account Management")
+
 public class AccountController {
 
     @Autowired
@@ -58,7 +61,7 @@ public class AccountController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody   RegisterRequest registerRequest) {
+    public ResponseEntity<?> register(@Valid @RequestBody   RegisterRequest registerRequest) {
         if (userService.findByUsername(registerRequest.getUsername())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
@@ -67,14 +70,12 @@ public class AccountController {
         user.setUserName(registerRequest.getUsername());
         user.setPassword((registerRequest.getPassword()));
 
-
-
         userService.createUser(user);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
         try {
             authenticate(loginRequest.getUsername(), loginRequest.getPassword());
         } catch (Exception e) {

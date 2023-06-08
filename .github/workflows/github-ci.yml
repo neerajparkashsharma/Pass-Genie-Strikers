@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build:
@@ -18,10 +18,10 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: 11
+          distribution: adopt@1.11
 
       - name: Build with Maven
         run: mvn clean install
 
       - name: Deploy Spring Boot App
         run: mvn spring-boot:run
-

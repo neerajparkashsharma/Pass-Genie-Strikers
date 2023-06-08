@@ -10,9 +10,6 @@ jobs:
     name: Build and Deploy
     runs-on: ubuntu-latest
 
-    container:
-      image: openjdk:18-alpine
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -28,5 +25,13 @@ jobs:
       - name: Run Tests
         run: mvn test
 
-      - name: Deploy Spring Boot App
-        run: mvn spring-boot:run
+      - name: Set up Docker
+        uses: docker/setup-docker@v2
+        with:
+          docker-host: tcp://localhost:2375
+
+      - name: Build Docker Image
+        run: docker build -t my-spring-boot-app .
+
+      - name: Run Docker Container
+        run: docker run -d --name my-app-container -p 8080:8080 my-spring-boot-app
